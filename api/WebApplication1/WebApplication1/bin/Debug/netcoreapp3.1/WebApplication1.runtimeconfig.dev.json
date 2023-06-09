@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\eviol\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\eviol\\.nuget\\packages"
+    ]
+  }
+}
