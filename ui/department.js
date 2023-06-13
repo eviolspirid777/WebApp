@@ -119,7 +119,7 @@ data-bs-target="#exampleModal"
         </button>
         <button type="button" @click="updateClick()"
         v-if="DepartmentId!=0" class="btn btn-primary">
-        Update
+        Изменить
         </button>
 
     </div>
@@ -159,7 +159,7 @@ methods:{
         this.DepartmentName="";
     },
     editClick(dep){
-        this.modalTitle="Edit Department";
+        this.modalTitle="Изменить";
         this.DepartmentId=dep.DepartmentId;
         this.DepartmentName=dep.DepartmentName;
     },

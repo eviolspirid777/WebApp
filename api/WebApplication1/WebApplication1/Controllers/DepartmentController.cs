@@ -24,13 +24,32 @@ namespace WebApplication1.Controllers
         [HttpGet]
         public JsonResult Get()
         {
+            /*
             string query = @"
                 select DepartmentId as ""DepartmentId"",
                         DepartmentName as ""DepartmentName""
                 from Department
-            ";
+            ";*/
 
-            DataTable table = new DataTable();
+			string query = @"
+                        SELECT 
+                            ID AS ""ID"",
+                            ""Name"",
+                            ""Surname"",
+                            ""Patron"",
+                            ""Faculty"",
+                            ""Specialty"",
+                            ""Course"",
+                            ""Group"",
+                            ""City"",
+                            ""PostalCode"",
+                            ""Street"",
+                            ""Phone"",
+                            ""Email""
+                        FROM Students;
+                        ";
+
+			DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
@@ -51,45 +70,102 @@ namespace WebApplication1.Controllers
         }
 
 
-        [HttpPost]
-        public JsonResult Post(Department dep)
+		[HttpPost]
+		public JsonResult Post(Student student)
+		{
+			string query = @"
+        INSERT INTO Students (
+            ""Name"",
+            ""Surname"",
+            ""Patron"",
+            ""Faculty"",
+            ""Specialty"",
+            ""Course"",
+            ""Group"",
+            ""City"",
+            ""PostalCode"",
+            ""Street"",
+            ""Phone"",
+            ""Email""
+        )
+        VALUES (
+            @Name,
+            @Surname,
+            @Patron,
+            @Faculty,
+            @Specialty,
+            @Course,
+            @Group,
+            @City,
+            @PostalCode,
+            @Street,
+            @Phone,
+            @Email
+        );
+    ";
+
+			DataTable table = new DataTable();
+			string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
+			NpgsqlDataReader myReader;
+			using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
+			{
+				myCon.Open();
+				using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
+				{
+					myCommand.Parameters.AddWithValue("@Name", student.Name);
+					myCommand.Parameters.AddWithValue("@Surname", student.Surname);
+					myCommand.Parameters.AddWithValue("@Patron", student.Patron);
+					myCommand.Parameters.AddWithValue("@Faculty", student.Faculty);
+					myCommand.Parameters.AddWithValue("@Specialty", student.Specialty);
+					myCommand.Parameters.AddWithValue("@Course", student.Course);
+					myCommand.Parameters.AddWithValue("@Group", student.Group);
+					myCommand.Parameters.AddWithValue("@City", student.City);
+					myCommand.Parameters.AddWithValue("@PostalCode", student.PostalCode);
+					myCommand.Parameters.AddWithValue("@Street", student.Street);
+					myCommand.Parameters.AddWithValue("@Phone", student.Phone);
+					myCommand.Parameters.AddWithValue("@Email", student.Email);
+
+					myReader = myCommand.ExecuteReader();
+					table.Load(myReader);
+
+					myReader.Close();
+					myCon.Close();
+				}
+			}
+
+			return new JsonResult("Added Successfully");
+		}
+
+		[HttpPut]
+        public JsonResult Put(Student dep)
         {
-            string query = @"
-                insert into Department(DepartmentName)
-                values (@DepartmentName)
-            ";
-
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
-            NpgsqlDataReader myReader;
-            using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
-            {
-                myCon.Open();
-                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
-                {
-                    myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    myCon.Close();
-
-                }
-            }
-
-            return new JsonResult("Added Successfully");
-        }
-
-        [HttpPut]
-        public JsonResult Put(Department dep)
-        {
+			/*
             string query = @"
                 update Department
                 set DepartmentName = @DepartmentName
                 where DepartmentId=@DepartmentId 
-            ";
+            ";*/
 
-            DataTable table = new DataTable();
+			string query = @"
+                        UPDATE Students
+                        SET
+                            ""Name"" = @Name,
+                            ""Surname"" = @Surname,
+                            ""Patron"" = @Patron,
+                            ""Faculty"" = @Faculty,
+                            ""Specialty"" = @Specialty,
+                            ""Course"" = @Course,
+                            ""Group"" = @Group,
+                            ""City"" = @City,
+                            ""PostalCode"" = @PostalCode,
+                            ""Street"" = @Street,
+                            ""Phone"" = @Phone,
+                            ""Email"" = @Email
+                        WHERE
+                            ""ID"" = @ID;
+                        ";
+
+			DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
@@ -97,9 +173,19 @@ namespace WebApplication1.Controllers
                 myCon.Open();
                 using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@DepartmentId", dep.DepartmentId);
-                    myCommand.Parameters.AddWithValue("@DepartmentName", dep.DepartmentName);
-                    myReader = myCommand.ExecuteReader();
+                    myCommand.Parameters.AddWithValue("@Name", dep.Name);
+                    myCommand.Parameters.AddWithValue("@Surname", dep.Surname);
+					myCommand.Parameters.AddWithValue("@Patron", dep.Patron);
+					myCommand.Parameters.AddWithValue("@Faculty", dep.Faculty);
+					myCommand.Parameters.AddWithValue("@Specialty", dep.Specialty);
+					myCommand.Parameters.AddWithValue("@Course", dep.Course);
+					myCommand.Parameters.AddWithValue("@Group", dep.Group);
+					myCommand.Parameters.AddWithValue("@City", dep.City);
+					myCommand.Parameters.AddWithValue("@PostalCode", dep.PostalCode);
+					myCommand.Parameters.AddWithValue("@Street", dep.Street);
+					myCommand.Parameters.AddWithValue("@Phone", dep.Phone);
+					myCommand.Parameters.AddWithValue("@Email", dep.Email);
+					myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 
                     myReader.Close();
@@ -114,12 +200,19 @@ namespace WebApplication1.Controllers
         [HttpDelete("{id}")]
         public JsonResult Delete(int id)
         {
+			/*
             string query = @"
                 delete from Department
                 where DepartmentId=@DepartmentId 
             ";
+            */
 
-            DataTable table = new DataTable();
+			string query = @"
+                        DELETE FROM Students
+                        WHERE ID = @ID;
+                        ";
+
+			DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("EmployeeAppCon");
             NpgsqlDataReader myReader;
             using (NpgsqlConnection myCon = new NpgsqlConnection(sqlDataSource))
@@ -127,7 +220,7 @@ namespace WebApplication1.Controllers
                 myCon.Open();
                 using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myCon))
                 {
-                    myCommand.Parameters.AddWithValue("@DepartmentId", id);
+                    myCommand.Parameters.AddWithValue("@ID", id);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 
